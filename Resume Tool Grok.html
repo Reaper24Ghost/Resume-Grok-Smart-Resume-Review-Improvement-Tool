@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resume Grok | Smart Resume Review & Improvement Tool</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --bg-elevated: #121826;
+      --bg-card: #161e2e;
+      --border: #243044;
+      --text: #e8edf7;
+      --text-muted: #9aa8c0;
+      --accent: #6c8cff;
+      --accent-soft: rgba(108, 140, 255, 0.15);
+      --accent-2: #22d3a6;
+      --accent-2-soft: rgba(34, 211, 166, 0.12);
+      --warning: #f5a623;
+      --danger: #ff6b6b;
+      --radius: 16px;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(108, 140, 255, 0.18), transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      width: min(1120px, 92%);
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), #a78bfa);
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.75rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #fff !important;
+      padding: 0.55rem 1.1rem;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .nav-cta:hover { filter: brightness(1.1); }
+
+    /* HERO */
+    .hero {
+      padding: 3.5rem 0 2.5rem;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 1.5rem;
+      border: 1px solid rgba(108, 140, 255, 0.25);
+    }
+
+    .hero h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.1rem, 5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.15;
+      margin-bottom: 1.1rem;
+      letter-spacing: -0.03em;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(90deg, var(--accent), #a78bfa, var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 620px;
+      margin: 0 auto 2rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.75rem 1.35rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, filter 0.15s, background 0.15s;
+      font-family: inherit;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.12); }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--accent); background: var(--accent-soft); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--text-muted); }
+
+    /* ========== UPLOAD / FORM AREA ========== */
+    .upload-section {
+      padding: 1rem 0 3.5rem;
+    }
+
+    .form-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .form-card h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.45rem;
+      margin-bottom: 0.4rem;
+      text-align: center;
+    }
+
+    .form-card > .form-desc {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.35rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 0.45rem;
+      color: var(--text);
+    }
+
+    .form-group label .optional {
+      font-weight: 400;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+    }
+
+    /* Drop zone */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: var(--bg-elevated);
+      position: relative;
+    }
+
+    .drop-zone:hover,
+    .drop-zone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .drop-zone.has-file {
+      border-style: solid;
+      border-color: var(--accent-2);
+      background: var(--accent-2-soft);
+    }
+
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .drop-icon {
+      font-size: 2rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .drop-text {
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .drop-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.35rem;
+    }
+
+    .file-info {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      color: var(--accent-2);
+      font-weight: 500;
+    }
+
+    .drop-zone.has-file .file-info { display: flex; }
+    .drop-zone.has-file .drop-default { display: none; }
+
+    .file-info button {
+      background: transparent;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      font-size: 0.85rem;
+      text-decoration: underline;
+      font-family: inherit;
+    }
+
+    /* Textarea */
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.92rem;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    textarea::placeholder { color: var(--text-muted); }
+
+    /* Mode selection */
+    .mode-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.6rem;
+    }
+
+    .mode-option {
+      position: relative;
+    }
+
+    .mode-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .mode-option label {
+      display: block;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 0.6rem;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin: 0;
+    }
+
+    .mode-option input:checked + label {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .mode-option label:hover {
+      border-color: var(--accent);
+    }
+
+    /* Extra options */
+    .extra-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .checkbox-row input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 1.75rem;
+      justify-content: center;
+    }
+
+    .form-actions .btn {
+      min-width: 160px;
+      justify-content: center;
+    }
+
+    /* Result panel */
+    .result-panel {
+      display: none;
+      margin-top: 2rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .result-panel.visible { display: block; }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .result-header h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.2rem;
+    }
+
+    .result-status {
+      font-size: 0.85rem;
+      color: var(--accent-2);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent-2);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .score-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin: 1rem 0;
+    }
+
+    .score-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.35rem 0.7rem;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .score-pill strong { color: var(--accent-2); }
+
+    .result-block {
+      margin-bottom: 1.25rem;
+    }
+
+    .result-block h4 {
+      font-size: 0.95rem;
+      margin-bottom: 0.45rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .result-block p,
+    .result-block ul {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .result-block ul {
+      padding-left: 1.2rem;
+      margin-top: 0.35rem;
+    }
+
+    .before-after {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.9rem;
+      margin-top: 0.6rem;
+    }
+
+    @media (max-width: 600px) {
+      .before-after { grid-template-columns: 1fr; }
+    }
+
+    .ba-box {
+      border-radius: 10px;
+      padding: 0.9rem;
+      font-size: 0.85rem;
+    }
+
+    .ba-box.before {
+      background: rgba(255, 107, 107, 0.08);
+      border: 1px solid rgba(255, 107, 107, 0.25);
+    }
+
+    .ba-box.after {
+      background: rgba(34, 211, 166, 0.08);
+      border: 1px solid rgba(34, 211, 166, 0.25);
+    }
+
+    .ba-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.35rem;
+    }
+
+    .ba-box.before .ba-label { color: var(--danger); }
+    .ba-box.after .ba-label { color: var(--accent-2); }
+
+    .note-box {
+      background: var(--accent-soft);
+      border: 1px solid rgba(108, 140, 255, 0.3);
+      border-radius: 10px;
+      padding: 0.9rem 1.1rem;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 1.25rem;
+    }
+
+    .note-box strong { color: var(--accent); }
+
+    /* SECTIONS */
+    section { padding: 3.5rem 0; }
+
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    .section-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      max-width: 560px;
+      margin-bottom: 2.2rem;
+    }
+
+    /* WORKFLOW */
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.15rem;
+    }
+
+    .workflow-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .workflow-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+
+    .workflow-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .workflow-card h3 { font-size: 1.02rem; margin-bottom: 0.35rem; }
+    .workflow-card p { font-size: 0.88rem; color: var(--text-muted); }
+
+    /* SCORING */
+    .scoring-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 1rem;
+    }
+
+    .score-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.3rem 1.4rem;
+      display: flex;
+      gap: 0.95rem;
+      align-items: flex-start;
+    }
+
+    .score-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .score-icon.clarity { background: rgba(108, 140, 255, 0.15); }
+    .score-icon.impact { background: rgba(34, 211, 166, 0.15); }
+    .score-icon.relevance { background: rgba(245, 166, 35, 0.15); }
+    .score-icon.ats { background: rgba(167, 139, 250, 0.15); }
+    .score-icon.story { background: rgba(255, 107, 107, 0.12); }
+    .score-icon.language { background: rgba(56, 189, 248, 0.15); }
+
+    .score-card h3 { font-size: 1.02rem; margin-bottom: 0.2rem; }
+    .score-card p { font-size: 0.86rem; color: var(--text-muted); }
+
+    /* MODES */
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.1rem;
+    }
+
+    .mode-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .mode-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow);
+    }
+
+    .mode-card .tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 0.18rem 0.5rem;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+    }
+
+    .mode-card h3 { font-size: 1.05rem; margin-bottom: 0.4rem; }
+    .mode-card p { font-size: 0.88rem; color: var(--text-muted); }
+
+    /* PRINCIPLES */
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.9rem;
+    }
+
+    .principle {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+
+    .principle .emoji { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .principle h4 { font-size: 0.92rem; margin-bottom: 0.25rem; }
+    .principle p { font-size: 0.8rem; color: var(--text-muted); }
+
+    /* COMPANIONS */
+    .companion-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.4rem;
+    }
+
+    @media (max-width: 700px) {
+      .companion-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+
+    .companion-card {
+      background: linear-gradient(160deg, var(--bg-card), #1a2438);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .companion-card::after {
+      content: '';
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(108, 140, 255, 0.2), transparent 70%);
+    }
+
+    .companion-card.linkedin::after {
+      background: radial-gradient(circle, rgba(34, 211, 166, 0.18), transparent 70%);
+    }
+
+    .companion-card h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .companion-card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .companion-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .companion-card ul li {
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .companion-card ul li::before {
+      content: '→';
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .companion-card.linkedin ul li::before { color: var(--accent-2); }
+
+    /* FEATURES LIST */
+    .features-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 800px) {
+      .features-layout { grid-template-columns: 1fr; }
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .feature-list li {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.15rem;
+    }
+
+    .check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-2-soft);
+      color: var(--accent-2);
+      display: grid;
+      place-items: center;
+      font-size: 0.7rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .feature-list h4 { font-size: 0.95rem; margin-bottom: 0.15rem; }
+    .feature-list p { font-size: 0.84rem; color: var(--text-muted); }
+
+    /* CTA */
+    .cta-band {
+      background: linear-gradient(135deg, rgba(108, 140, 255, 0.18), rgba(34, 211, 166, 0.1));
+      border: 1px solid rgba(108, 140, 255, 0.3);
+      border-radius: var(--radius);
+      padding: 2.75rem 2rem;
+      text-align: center;
+      margin: 1.5rem 0 3.5rem;
+    }
+
+    .cta-band h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      margin-bottom: 0.5rem;
+    }
+
+    .cta-band p {
+      color: var(--text-muted);
+      margin-bottom: 1.4rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.75rem 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- NAV -->
+    <nav>
+      <a href="#" class="logo">
+        <div class="logo-icon">✦</div>
+        Resume Grok
+      </a>
+      <ul class="nav-links">
+        <li><a href="#upload">Upload</a></li>
+        <li><a href="#workflow">Workflow</a></li>
+        <li><a href="#scoring">Scoring</a></li>
+        <li><a href="#modes">Modes</a></li>
+        <li><a href="#companions">Companions</a></li>
+        <li><a href="#upload" class="nav-cta">Start Review</a></li>
+      </ul>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+      <div class="badge">✦ smart-resume-review skill</div>
+      <h1>Smart Resume Review<br>&amp; <span>Improvement Tool</span></h1>
+      <p>
+        Upload your resume, choose a mode, and get structured professional feedback —
+        scoring, critiques, rewrites, ATS notes, cover letter &amp; LinkedIn alignment.
+      </p>
+      <div class="hero-actions">
+        <a href="#upload" class="btn btn-primary">Upload Resume</a>
+        <a href="#workflow" class="btn btn-secondary">How it works</a>
+      </div>
+    </header>
+
+    <!-- ========== REAL UPLOAD / FORM AREA ========== -->
+    <section class="upload-section" id="upload">
+      <div class="form-card">
+        <h2>Start Your Review</h2>
+        <p class="form-desc">Upload a resume, optionally paste a job description, pick a mode, and run the analysis.</p>
+
+        <form id="resumeForm" novalidate>
+          <!-- File upload -->
+          <div class="form-group">
+            <label>Resume file <span class="optional">(PDF, DOCX, TXT, or MD)</span></label>
+            <div class="drop-zone" id="dropZone">
+              <input type="file" id="resumeFile" accept=".pdf,.doc,.docx,.txt,.md,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,text/markdown">
+              <div class="drop-default">
+                <div class="drop-icon">📄</div>
+                <div class="drop-text">Drag & drop your resume here</div>
+                <div class="drop-hint">or click to browse · Max 5 MB</div>
+              </div>
+              <div class="file-info" id="fileInfo">
+                <span id="fileName"></span>
+                <button type="button" id="clearFile">Remove</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Or paste text -->
+          <div class="form-group">
+            <label>Or paste resume text <span class="optional">(optional if you uploaded a file)</span></label>
+            <textarea id="resumeText" placeholder="Paste the full text of your resume here..."></textarea>
+          </div>
+
+          <!-- Job description -->
+          <div class="form-group">
+            <label>Job description <span class="optional">(optional — needed for job-tailored mode)</span></label>
+            <textarea id="jobDesc" placeholder="Paste the job description or key requirements here..."></textarea>
+          </div>
+
+          <!-- Mode selection -->
+          <div class="form-group">
+            <label>Review mode</label>
+            <div class="mode-options">
+              <div class="mode-option">
+                <input type="radio" name="mode" id="mode-review" value="review" checked>
+                <label for="mode-review">Review only</label>
+              </div>
+              <div class="mode-option">
+                <input type="radio" name="mode" id="mode-improve" value="improve">
+                <label for="mode-improve">Full rewrite</label>
+              </div>
+              <div class="mode-option">
+                <input type="radio" name="mode" id="mode-rewrite" value="rewrite">
+                <label for="mode-rewrite">Rewrite bullets</label>
+              </div>
+              <div class="mode-option">
+                <input type="radio" name="mode" id="mode-tailor" value="tailor">
+                <label for="mode-tailor">Job-tailored</label>
+              </div>
+              <div class="mode-option">
+                <input type="radio" name="mode" id="mode-ats" value="ats">
+                <label for="mode-ats">ATS-friendly</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extra options -->
+          <div class="form-group">
+            <label>Also generate</label>
+            <div class="extra-options">
+              <label class="checkbox-row">
+                <input type="checkbox" id="optCover"> Cover letter companion
+              </label>
+              <label class="checkbox-row">
+                <input type="checkbox" id="optLinkedin"> LinkedIn profile alignment
+              </label>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+              Run Review
+            </button>
+            <button type="button" class="btn btn-ghost" id="resetBtn">Reset</button>
+          </div>
+        </form>
+
+        <!-- Result area -->
+        <div class="result-panel" id="resultPanel">
+          <div class="result-header">
+            <h3 id="resultTitle">Analysis Result</h3>
+            <div class="result-status" id="resultStatus">
+              <span class="spinner" id="resultSpinner"></span>
+              <span id="resultStatusText">Processing…</span>
+            </div>
+          </div>
+
+          <div id="resultBody">
+            <!-- Filled by JS -->
+          </div>
+
+          <div class="note-box">
+            <strong>Note:</strong> This is a client-side demo of the form &amp; feedback structure.
+            In the real <em>smart-resume-review</em> skill inside Grok, your resume is analyzed with the full professional workflow (6-dimension scoring, section critiques, before→after rewrites, ATS notes, and prioritized actions).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORKFLOW -->
+    <section id="workflow">
+      <div class="section-label">Structured Workflow</div>
+      <h2 class="section-title">From intake to prioritized actions</h2>
+      <p class="section-desc">Every review follows the same professional pipeline so feedback stays consistent, clear, and actionable.</p>
+      <div class="workflow-grid">
+        <div class="workflow-card">
+          <div class="workflow-num">1</div>
+          <h3>Intake</h3>
+          <p>Pulls in your resume + optional job description. Detects role, seniority, and target industry.</p>
+        </div>
+        <div class="workflow-card">
+          <div class="workflow-num">2</div>
+          <h3>6-Dimension Scoring</h3>
+          <p>Clarity · Impact · Relevance · ATS · Story · Language — each scored with evidence.</p>
+        </div>
+        <div class="workflow-card">
+          <div class="workflow-num">3</div>
+          <h3>Structured Feedback</h3>
+          <p>Executive summary, section-by-section critique, and before → after bullet rewrites.</p>
+        </div>
+        <div class="workflow-card">
+          <div class="workflow-num">4</div>
+          <h3>Next Actions</h3>
+          <p>Keyword &amp; ATS notes plus a prioritized checklist so you know exactly what to fix first.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCORING -->
+    <section id="scoring">
+      <div class="section-label">6-Dimension Scoring</div>
+      <h2 class="section-title">Every dimension that hiring managers &amp; ATS care about</h2>
+      <p class="section-desc">Transparent scores with concrete evidence — not vague “looks good” comments.</p>
+      <div class="scoring-grid">
+        <div class="score-card">
+          <div class="score-icon clarity">👁</div>
+          <div>
+            <h3>Clarity</h3>
+            <p>Scannability, hierarchy, white space, and whether a recruiter can grasp your value in 6 seconds.</p>
+          </div>
+        </div>
+        <div class="score-card">
+          <div class="score-icon impact">💥</div>
+          <div>
+            <h3>Impact</h3>
+            <p>Strong verbs, quantification, outcomes over duties. Did you move a metric or just “responsible for”?</p>
+          </div>
+        </div>
+        <div class="score-card">
+          <div class="score-icon relevance">🎯</div>
+          <div>
+            <h3>Relevance</h3>
+            <p>Alignment to target role and industry. Removes noise and elevates the experience that matters.</p>
+          </div>
+        </div>
+        <div class="score-card">
+          <div class="score-icon ats">🤖</div>
+          <div>
+            <h3>ATS</h3>
+            <p>Keyword density, standard section headers, clean formatting, and parseability for applicant tracking systems.</p>
+          </div>
+        </div>
+        <div class="score-card">
+          <div class="score-icon story">📖</div>
+          <div>
+            <h3>Story</h3>
+            <p>Career narrative, progression, and how your summary + bullets tell a coherent professional story.</p>
+          </div>
+        </div>
+        <div class="score-card">
+          <div class="score-icon language">✍️</div>
+          <div>
+            <h3>Language</h3>
+            <p>Tone, tense consistency, grammar, jargon balance, and elimination of weak or cliché phrasing.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DELIVERY MODES -->
+    <section id="modes">
+      <div class="section-label">Delivery Modes</div>
+      <h2 class="section-title">Choose how deep you want to go</h2>
+      <p class="section-desc">One skill, four output styles — pick the depth that matches your needs.</p>
+      <div class="modes-grid">
+        <div class="mode-card">
+          <span class="tag">Review only</span>
+          <h3>Diagnostic Report</h3>
+          <p>Scores, executive summary, section critiques, and prioritized next actions. No full rewrite — just the diagnosis.</p>
+        </div>
+        <div class="mode-card">
+          <span class="tag">Full rewrite</span>
+          <h3>Polished Version</h3>
+          <p>Complete rewritten resume with stronger bullets, tighter summary, and best-practice formatting applied throughout.</p>
+        </div>
+        <div class="mode-card">
+          <span class="tag">Job-tailored</span>
+          <h3>Role-Specific Version</h3>
+          <p>Resume reshaped around a specific job description: keywords injected, irrelevant experience de-emphasized.</p>
+        </div>
+        <div class="mode-card">
+          <span class="tag">Side-by-side</span>
+          <h3>Before → After View</h3>
+          <p>Original and improved bullets shown together so you can learn the patterns and apply them yourself.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BEST PRACTICES -->
+    <section>
+      <div class="section-label">Best-Practice Principles</div>
+      <h2 class="section-title">Built on what actually works</h2>
+      <p class="section-desc">The skill applies proven resume standards automatically.</p>
+      <div class="principles">
+        <div class="principle">
+          <div class="emoji">⚡</div>
+          <h4>Strong Action Verbs</h4>
+          <p>Led, Drove, Built, Optimized — never “Helped with” or “Responsible for”.</p>
+        </div>
+        <div class="principle">
+          <div class="emoji">📊</div>
+          <h4>Quantification</h4>
+          <p>Metrics, percentages, dollar amounts, and scale wherever possible.</p>
+        </div>
+        <div class="principle">
+          <div class="emoji">🛡️</div>
+          <h4>ATS-Safe Formatting</h4>
+          <p>Standard headers, no tables/columns, clean text that parsers can read.</p>
+        </div>
+        <div class="principle">
+          <div class="emoji">📏</div>
+          <h4>Length Guidelines</h4>
+          <p>1 page for early career, 2 pages max for senior — ruthlessly prioritized.</p>
+        </div>
+        <div class="principle">
+          <div class="emoji">🔑</div>
+          <h4>Keyword Strategy</h4>
+          <p>Natural keyword placement from the job description without stuffing.</p>
+        </div>
+        <div class="principle">
+          <div class="emoji">🧭</div>
+          <h4>Clear Hierarchy</h4>
+          <p>Most relevant experience first, consistent date formats, scannable structure.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPANIONS -->
+    <section id="companions">
+      <div class="section-label">Companion Modes</div>
+      <h2 class="section-title">Beyond the resume</h2>
+      <p class="section-desc">Extend the same quality bar to your cover letter and LinkedIn profile.</p>
+      <div class="companion-grid">
+        <div class="companion-card">
+          <h3>✉ Cover-Letter Companion</h3>
+          <p>Generate a tailored cover letter that mirrors the resume’s strongest themes and matches the job’s language.</p>
+          <ul>
+            <li>Hooks that reference the company or role</li>
+            <li>3–4 proof-point paragraphs aligned to requirements</li>
+            <li>Confident, concise close with clear CTA</li>
+            <li>Tone matched to industry &amp; seniority</li>
+          </ul>
+        </div>
+        <div class="companion-card linkedin">
+          <h3>💼 LinkedIn Profile Alignment</h3>
+          <p>Rewrite your Headline, About, and Experience so they reinforce the same story as your resume — without sounding identical.</p>
+          <ul>
+            <li>Keyword-rich, searchable Headline</li>
+            <li>About section that tells a career narrative</li>
+            <li>Experience bullets optimized for LinkedIn’s style</li>
+            <li>Consistency across resume ↔ LinkedIn</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section>
+      <div class="section-label">Everything Included</div>
+      <h2 class="section-title">One skill, complete toolkit</h2>
+      <div class="features-layout">
+        <ul class="feature-list">
+          <li>
+            <div class="check">✓</div>
+            <div>
+              <h4>Review my resume</h4>
+              <p>Full diagnostic with 6 scores, critiques, and action list.</p>
+            </div>
+          </li>
+          <li>
+            <div class="check">✓</div>
+            <div>
+              <h4>Improve this resume</h4>
+              <p>Complete polish pass applying best-practice principles.</p>
+            </div>
+          </li>
+          <li>
+            <div class="check">✓</div>
+            <div>
+              <h4>Rewrite my bullets</h4>
+              <p>Before → After transformations focused on impact language.</p>
+            </div>
+          </li>
+        </ul>
+        <ul class="feature-list">
+          <li>
+            <div class="check">✓</div>
+            <div>
+              <h4>Tailor to job description</h4>
+              <p>Role-specific version with keyword strategy and relevance boost.</p>
+            </div>
+          </li>
+          <li>
+            <div class="check">✓</div>
+            <div>
+              <h4>Make it ATS-friendly</h4>
+              <p>Parseability fixes + keyword optimization for tracking systems.</p>
+            </div>
+          </li>
+          <li>
+            <div class="check">✓</div>
+            <div>
+              <h4>Cover letter &amp; LinkedIn</h4>
+              <p>Companion modes that keep messaging consistent across channels.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-band">
+      <h2>Ready to upgrade your resume?</h2>
+      <p>Upload your file above, choose a mode, and run the review. Or use the real smart-resume-review skill inside Grok for full AI analysis.</p>
+      <a href="#upload" class="btn btn-primary">Go to Upload Form</a>
+    </div>
+
+    <footer>
+      <p>
+        <strong>Resume Grok</strong> · smart-resume-review skill<br>
+        Built for clarity, impact, and ATS success.
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // ========== File upload handling ==========
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('resumeFile');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const clearFileBtn = document.getElementById('clearFile');
+
+    function setFile(file) {
+      if (!file) return;
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File is too large. Please keep it under 5 MB.');
+        fileInput.value = '';
+        return;
+      }
+      dropZone.classList.add('has-file');
+      fileName.textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+    }
+
+    function clearFile() {
+      fileInput.value = '';
+      dropZone.classList.remove('has-file');
+      fileName.textContent = '';
+    }
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) setFile(fileInput.files[0]);
+      else clearFile();
+    });
+
+    clearFileBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      clearFile();
+    });
+
+    // Drag & drop
+    ['dragenter', 'dragover'].forEach(evt => {
+      dropZone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(evt => {
+      dropZone.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove('dragover');
+      });
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const files = e.dataTransfer.files;
+      if (files.length) {
+        fileInput.files = files;
+        setFile(files[0]);
+      }
+    });
+
+    // ========== Form submit ==========
+    const form = document.getElementById('resumeForm');
+    const resultPanel = document.getElementById('resultPanel');
+    const resultBody = document.getElementById('resultBody');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultStatus = document.getElementById('resultStatus');
+    const resultSpinner = document.getElementById('resultSpinner');
+    const resultStatusText = document.getElementById('resultStatusText');
+    const submitBtn = document.getElementById('submitBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    const sampleResults = {
+      review: {
+        title: 'Diagnostic Review',
+        html: `
+          <div class="result-block">
+            <h4>📋 Executive Summary</h4>
+            <p>Solid foundation with relevant experience, but impact is diluted by duty-style bullets and missing metrics. ATS score is moderate — several target keywords are absent. Story is clear for a mid-level product role; language needs tighter verbs.</p>
+            <div class="score-row">
+              <div class="score-pill">Clarity <strong>7.5</strong></div>
+              <div class="score-pill">Impact <strong>5.0</strong></div>
+              <div class="score-pill">Relevance <strong>8.0</strong></div>
+              <div class="score-pill">ATS <strong>6.0</strong></div>
+              <div class="score-pill">Story <strong>7.0</strong></div>
+              <div class="score-pill">Language <strong>6.5</strong></div>
+            </div>
+          </div>
+          <div class="result-block">
+            <h4>🔍 Section-by-Section Critique</h4>
+            <ul>
+              <li><strong>Summary</strong> — Generic opener. Replace with a value proposition that names the role + 1–2 proof points.</li>
+              <li><strong>Experience</strong> — 60% of bullets start with weak verbs. Quantify team size, revenue, or efficiency gains.</li>
+              <li><strong>Skills</strong> — Good list, but missing keywords present in the job description.</li>
+            </ul>
+          </div>
+          <div class="result-block">
+            <h4>✅ Prioritized Next Actions</h4>
+            <ul>
+              <li>Rewrite top 6 bullets with metrics (highest ROI)</li>
+              <li>Inject missing keywords from the JD</li>
+              <li>Shorten summary to 3 lines with a clear target title</li>
+            </ul>
+          </div>
+        `
+      },
+      improve: {
+        title: 'Full Improvement Pass',
+        html: `
+          <div class="result-block">
+            <h4>✨ Polished Version Applied</h4>
+            <p>Best-practice principles applied across the document: stronger verbs, quantification, ATS-safe structure, and tighter narrative.</p>
+          </div>
+          <div class="result-block">
+            <h4>Before → After (sample)</h4>
+            <div class="before-after">
+              <div class="ba-box before">
+                <div class="ba-label">Before</div>
+                Responsible for managing a team of product managers and coordinating with engineering on feature launches.
+              </div>
+              <div class="ba-box after">
+                <div class="ba-label">After</div>
+                Led a team of 5 PMs to ship 12 features in 18 months, increasing activation by 23% and cutting time-to-release 30%.
+              </div>
+            </div>
+          </div>
+          <div class="result-block">
+            <h4>Changes Applied</h4>
+            <ul>
+              <li>Replaced passive language with ownership verbs</li>
+              <li>Added measurable outcomes</li>
+              <li>Preserved original truth while elevating impact</li>
+            </ul>
+          </div>
+        `
+      },
+      rewrite: {
+        title: 'Bullet Rewrite Mode',
+        html: `
+          <div class="result-block">
+            <h4>✏️ Focused Bullet Transformations</h4>
+            <p>Experience bullets rewritten for impact while leaving structure intact.</p>
+          </div>
+          <div class="before-after">
+            <div class="ba-box before">
+              <div class="ba-label">Before</div>
+              Worked on improving the onboarding flow and helped reduce drop-off.
+            </div>
+            <div class="ba-box after">
+              <div class="ba-label">After</div>
+              Redesigned onboarding flow for 40k monthly sign-ups, reducing drop-off 18% and lifting Day-7 retention 11%.
+            </div>
+          </div>
+          <div class="before-after" style="margin-top:0.9rem">
+            <div class="ba-box before">
+              <div class="ba-label">Before</div>
+              Collaborated with design and engineering to deliver new dashboard features.
+            </div>
+            <div class="ba-box after">
+              <div class="ba-label">After</div>
+              Partnered with Design &amp; Eng to ship 4 dashboard modules used by 2.1k weekly active customers.
+            </div>
+          </div>
+        `
+      },
+      tailor: {
+        title: 'Job-Tailored Version',
+        html: `
+          <div class="result-block">
+            <h4>🎯 Role-Specific Tailoring</h4>
+            <p>Resume reshaped against the provided job description. Keywords, required skills, and role language woven in naturally.</p>
+          </div>
+          <div class="result-block">
+            <h4>Keyword &amp; ATS Notes</h4>
+            <ul>
+              <li>Injected: product roadmap, cross-functional leadership, SQL, experimentation, stakeholder management</li>
+              <li>De-emphasized early experience that doesn’t map to the target role</li>
+              <li>Summary now mirrors the JD’s top responsibilities</li>
+            </ul>
+          </div>
+          <div class="result-block">
+            <h4>Relevance Lift</h4>
+            <p>Relevance score projected to rise significantly. ATS keyword match improves from ~55% to ~85%.</p>
+          </div>
+        `
+      },
+      ats: {
+        title: 'ATS Optimization Pass',
+        html: `
+          <div class="result-block">
+            <h4>🤖 ATS-Friendly Fixes</h4>
+            <p>Formatting and keyword audit focused on parseability and match rate.</p>
+          </div>
+          <div class="result-block">
+            <h4>Issues Fixed</h4>
+            <ul>
+              <li>Removed multi-column layout that broke most parsers</li>
+              <li>Standardized headers: Experience, Education, Skills</li>
+              <li>Converted icons and graphics to plain text</li>
+              <li>Added missing hard skills from the job description</li>
+            </ul>
+          </div>
+          <div class="result-block">
+            <h4>Result</h4>
+            <p>ATS score projected to improve substantially. Document remains human-readable while becoming fully machine-friendly.</p>
+          </div>
+        `
+      }
+    };
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const hasFile = fileInput.files && fileInput.files[0];
+      const hasText = document.getElementById('resumeText').value.trim().length > 20;
+
+      if (!hasFile && !hasText) {
+        alert('Please upload a resume file or paste resume text (at least a few lines).');
+        return;
+      }
+
+      const mode = document.querySelector('input[name="mode"]:checked').value;
+      const wantCover = document.getElementById('optCover').checked;
+      const wantLinkedin = document.getElementById('optLinkedin').checked;
+      const hasJD = document.getElementById('jobDesc').value.trim().length > 10;
+
+      if (mode === 'tailor' && !hasJD) {
+        alert('Job-tailored mode works best with a job description. Please paste one, or choose another mode.');
+        return;
+      }
+
+      // Show loading state
+      resultPanel.classList.add('visible');
+      resultSpinner.style.display = 'inline-block';
+      resultStatusText.textContent = 'Analyzing…';
+      resultBody.innerHTML = '';
+      resultTitle.textContent = 'Processing';
+      submitBtn.disabled = true;
+
+      // Simulate analysis delay
+      setTimeout(() => {
+        const data = sampleResults[mode] || sampleResults.review;
+        resultTitle.textContent = data.title;
+        resultSpinner.style.display = 'none';
+        resultStatusText.textContent = 'Complete';
+
+        let extra = '';
+        if (wantCover) {
+          extra += `
+            <div class="result-block">
+              <h4>✉ Cover Letter Companion</h4>
+              <p>A tailored cover letter draft would be generated here, matching the resume’s strongest themes and the job’s language (hook, proof points, confident close).</p>
+            </div>`;
+        }
+        if (wantLinkedin) {
+          extra += `
+            <div class="result-block">
+              <h4>💼 LinkedIn Profile Alignment</h4>
+              <p>Headline, About, and Experience suggestions would appear here so your LinkedIn profile reinforces the same story as the resume.</p>
+            </div>`;
+        }
+
+        resultBody.innerHTML = data.html + extra;
+        submitBtn.disabled = false;
+        resultPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 1600);
+    });
+
+    resetBtn.addEventListener('click', () => {
+      form.reset();
+      clearFile();
+      resultPanel.classList.remove('visible');
+      resultBody.innerHTML = '';
+      submitBtn.disabled = false;
+    });
+  </script>
+</body>
+</html>
